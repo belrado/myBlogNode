@@ -1,15 +1,18 @@
-const express       = require('express');
-const cookieParser  = require('cookie-parser');
-const morgan        = require('morgan');
-const path          = require('path');
-const session       = require('express-session');
-const nunjucks      = require('nunjucks');
-const dotenv        = require('dotenv');
+const express           = require('express');
+const cookieParser      = require('cookie-parser');
+const morgan            = require('morgan');
+const path              = require('path');
+const session           = require('express-session');
+const nunjucks          = require('nunjucks');
+const dotenv            = require('dotenv');
+const passport          = require('passport');
 
 dotenv.config();
-const pageRouter    = require('./routes/sendBird/page');
+const pageRouter        = require('./routes/sendBird/page');
+const passportConfig    = require('./passport');
 
-const app           = express();
+const app               = express();
+passportConfig();
 app.set('port', process.env.PORT);
 app.set('view engine', 'html');
 nunjucks.configure('views/sendBird', {
@@ -31,6 +34,8 @@ app.use(session({
         secure: false,
     }
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', pageRouter);
 
